@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>EBC.json</title>
+<style>
+  body { font-family: sans-serif; margin: 2rem; }
+  input, textarea { display: block; margin-bottom: 1rem; width: 100%; }
+  button { margin-right: 1rem; }
+</style>
+</head>
+<body>
+
+<h1>JSON生成フォーム</h1>
+
+<label>Title</label>
+<input type="text" id="title">
+
+<label>Serial</label>
+<input type="text" id="serial">
+
+<label>Body</label>
+<textarea id="body" rows="4"></textarea>
+
+<button id="addBtn">追加</button>
+<button id="copyBtn">JSONコピー</button>
+
+<script>
+  const data = [];
+
+  const titleInput = document.getElementById('title');
+  const serialInput = document.getElementById('serial');
+  const bodyInput = document.getElementById('body');
+  const addBtn = document.getElementById('addBtn');
+  const copyBtn = document.getElementById('copyBtn');
+
+  addBtn.addEventListener('click', () => {
+    const title = titleInput.value.trim();
+    const serial = serialInput.value.trim();
+    const body = bodyInput.value.trim();
+
+    if (!title || !serial || !body) {
+      alert('すべての項目を入力してください');
+      return;
+    }
+
+    data.push({ title, serial, body });
+
+    // 入力欄をクリア
+    titleInput.value = '';
+    serialInput.value = '';
+    bodyInput.value = '';
+
+    alert('追加しました！現在の件数: ' + data.length);
+  });
+
+  copyBtn.addEventListener('click', () => {
+    if (data.length === 0) {
+      alert('まだデータがありません');
+      return;
+    }
+    const jsonStr = JSON.stringify(data, null, 2);
+    navigator.clipboard.writeText(jsonStr).then(() => {
+      alert('JSONをコピーしました');
+    }).catch(err => {
+      alert('コピーに失敗しました: ' + err);
+    });
+  });
+</script>
+
+</body>
+</html>
