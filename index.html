@@ -2,14 +2,17 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>t3.JSON編集フォーム</title>
+<title>t4.JSON編集フォーム</title>
 <style>
   body { font-family: sans-serif; margin: 2rem; }
-  table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; font-size: 0.9rem; }
-  th, td { border: 1px solid #ccc; padding: 0.3rem 0.5rem; vertical-align: top; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; font-size: 0.9rem; table-layout: fixed; }
+  th, td { border: 1px solid #ccc; padding: 0.3rem 0.5rem; vertical-align: top; overflow: hidden; word-wrap: break-word; }
+  th.title, td.title { width: 50%; }
+  th.serial, td.serial { width: 25%; }
+  th.body, td.body { width: auto; }
+  th.action, td.action { width: 80px; text-align: center; }
   input, textarea { width: 100%; box-sizing: border-box; font-size: 0.9rem; }
   button { margin: 0; padding: 0.2rem 0.4rem; font-size: 0.85rem; }
-  td.action { width: 60px; text-align: center; }
 </style>
 </head>
 <body>
@@ -19,10 +22,10 @@
 <table id="jsonTable">
   <thead>
     <tr>
-      <th>Title</th>
-      <th>Serial</th>
-      <th>Body</th>
-      <th>操作</th>
+      <th class="title">Title</th>
+      <th class="serial">Serial</th>
+      <th class="body">Body</th>
+      <th class="action">操作</th>
     </tr>
   </thead>
   <tbody>
@@ -48,6 +51,7 @@
 
     // Title
     const titleTd = document.createElement('td');
+    titleTd.className = 'title';
     const titleInput = document.createElement('input');
     titleInput.value = item.title;
     titleTd.appendChild(titleInput);
@@ -55,6 +59,7 @@
 
     // Serial
     const serialTd = document.createElement('td');
+    serialTd.className = 'serial';
     const serialInput = document.createElement('input');
     serialInput.value = item.serial;
     serialTd.appendChild(serialInput);
@@ -62,6 +67,7 @@
 
     // Body
     const bodyTd = document.createElement('td');
+    bodyTd.className = 'body';
     const bodyTextarea = document.createElement('textarea');
     bodyTextarea.rows = 3;
     bodyTextarea.value = item.body;
@@ -70,6 +76,7 @@
 
     // 操作
     const actionTd = document.createElement('td');
+    actionTd.className = 'action';
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = '削除';
     deleteBtn.addEventListener('click', () => {
