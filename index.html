@@ -2,69 +2,108 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>EBC.json</title>
+<title>t2.JSON編集フォーム</title>
 <style>
   body { font-family: sans-serif; margin: 2rem; }
-  input, textarea { display: block; margin-bottom: 1rem; width: 100%; }
-  button { margin-right: 1rem; }
+  table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
+  th, td { border: 1px solid #ccc; padding: 0.5rem; }
+  input, textarea { width: 100%; box-sizing: border-box; }
+  button { margin-right: 1rem; margin-top: 0.5rem; }
 </style>
 </head>
 <body>
 
-<h1>JSON生成フォーム</h1>
+<h1>JSON編集フォーム</h1>
 
-<label>Title</label>
-<input type="text" id="title">
+<table id="jsonTable">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Serial</th>
+      <th>Body</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- 行がここに追加される -->
+  </tbody>
+</table>
 
-<label>Serial</label>
-<input type="text" id="serial">
-
-<label>Body</label>
-<textarea id="body" rows="4"></textarea>
-
-<button id="addBtn">追加</button>
-<button id="copyBtn">JSONコピー</button>
+<button id="addRowBtn">行を追加</button>
+<button id="copyJsonBtn">JSONコピー</button>
 
 <script>
-  const data = [];
+  // 初期データ
+  const data = [
+    { "title": "地震", "serial": "1", "body": "さきほど、青森県東方沖を震源とするM7.5、深さ50km、最大震度6強の強い地震がありました。" },
+    { "title": "津波", "serial": "2", "body": "現在、津波警報を発表中です。" }
+  ];
 
-  const titleInput = document.getElementById('title');
-  const serialInput = document.getElementById('serial');
-  const bodyInput = document.getElementById('body');
-  const addBtn = document.getElementById('addBtn');
-  const copyBtn = document.getElementById('copyBtn');
+  const tableBody = document.getElementById('jsonTable').querySelector('tbody');
 
-  addBtn.addEventListener('click', () => {
-    const title = titleInput.value.trim();
-    const serial = serialInput.value.trim();
-    const body = bodyInput.value.trim();
+  // テーブル行を作る関数
+  function addRow(item = { title: '', serial: '', body: '' }) {
+    const row = document.createElement('tr');
 
-    if (!title || !serial || !body) {
-      alert('すべての項目を入力してください');
-      return;
-    }
+    // Title
+    const titleTd = document.createElement('td');
+    const titleInput = document.createElement('input');
+    titleInput.value = item.title;
+    titleTd.appendChild(titleInput);
+    row.appendChild(titleTd);
 
-    data.push({ title, serial, body });
+    // Serial
+    const serialTd = document.createElement('td');
+    const serialInput = document.createElement('input');
+    serialInput.value = item.serial;
+    serialTd.appendChild(serialInput);
+    row.appendChild(serialTd);
 
-    // 入力欄をクリア
-    titleInput.value = '';
-    serialInput.value = '';
-    bodyInput.value = '';
+    // Body
+    const bodyTd = document.createElement('td');
+    const bodyTextarea = document.createElement('textarea');
+    bodyTextarea.rows = 3;
+    bodyTextarea.value = item.body;
+    bodyTd.appendChild(bodyTextarea);
+    row.appendChild(bodyTd);
 
-    alert('追加しました！現在の件数: ' + data.length);
-  });
-
-  copyBtn.addEventListener('click', () => {
-    if (data.length === 0) {
-      alert('まだデータがありません');
-      return;
-    }
-    const jsonStr = JSON.stringify(data, null, 2);
-    navigator.clipboard.writeText(jsonStr).then(() => {
-      alert('JSONをコピーしました');
-    }).catch(err => {
-      alert('コピーに失敗しました: ' + err);
+    // 操作
+    const actionTd = document.createElement('td');
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '削除';
+    deleteBtn.addEventListener('click', () => {
+      tableBody.removeChild(row);
     });
+    actionTd.appendChild(deleteBtn);
+    row.appendChild(actionTd);
+
+    tableBody.appendChild(row);
+  }
+
+  // 初期データを表示
+  data.forEach(item => addRow(item));
+
+  // 追加ボタン
+  document.getElementById('addRowBtn').addEventListener('click', () => addRow());
+
+  // JSONコピー
+  document.getElementById('copyJsonBtn').addEventListener('click', () => {
+    const rows = tableBody.querySelectorAll('tr');
+    const jsonArray = [];
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input, textarea');
+      const obj = {
+        title: inputs[0].value.trim(),
+        serial: inputs[1].value.trim(),
+        body: inputs[2].value.trim()
+      };
+      if (obj.title || obj.serial || obj.body) {
+        jsonArray.push(obj);
+      }
+    });
+    navigator.clipboard.writeText(JSON.stringify(jsonArray, null, 2))
+      .then(() => alert('JSONをコピーしました'))
+      .catch(err => alert('コピーに失敗しました: ' + err));
   });
 </script>
 
